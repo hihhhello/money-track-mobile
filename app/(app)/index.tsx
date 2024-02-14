@@ -1,5 +1,15 @@
-import { Text } from 'react-native';
+import { Button, Text, View } from 'react-native';
+
+import { useAuth } from '@/providers/AuthProvider';
 
 export default function HomeScreen() {
-  return <Text>Home Screen</Text>;
+  const { signOut } = useAuth();
+
+  return (
+    <View>
+      <Text>Home Screen</Text>
+
+      <Button title="Sign Out" onPress={signOut} />
+    </View>
+  );
 }

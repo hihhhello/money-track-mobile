@@ -1,9 +1,11 @@
 import axios from 'axios';
+import * as SecureStore from 'expo-secure-store';
 import {
   PropsWithChildren,
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from 'react';
@@ -42,6 +44,25 @@ export const useAuth = () => {
 
 export const AuthProvider = (props: PropsWithChildren) => {
   const [session, setSession] = useState<AuthContextType['session']>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    setIsLoading(true);
+
+    async function getSession() {
+      SecureStore.getItemAsync('session').then((storeSession) => {
+        console.log('storeSession', storeSession);
+
+        if (storeSession) {
+          setSession(JSON.parse(storeSession));
+        }
+
+        setIsLoading(false);
+      });
+    }
+
+    getSession();
+  }, []);
 
   const signIn = useCallback(
     async (credentials: { password: string; email: string }) => {
@@ -65,6 +86,12 @@ export const AuthProvider = (props: PropsWithChildren) => {
           });
 
           setSession({ user: userInfoResponse.data });
+          await SecureStore.setItemAsync(
+            'session',
+            JSON.stringify({
+              user: userInfoResponse.data,
+            }),
+          );
         }
       } catch (err) {
         Alert.alert('Error', JSON.stringify(err));
@@ -73,14 +100,19 @@ export const AuthProvider = (props: PropsWithChildren) => {
     [],
   );
 
+  const signOut = useCallback(async () => {
+    setSession(null);
+    await SecureStore.deleteItemAsync('session');
+  }, []);
+
   const values: AuthContextType = useMemo(
     () => ({
       signIn,
-      signOut: () => {},
-      isLoading: false,
+      signOut,
+      isLoading,
       session,
     }),
-    [session, signIn],
+    [isLoading, session, signIn, signOut],
   );
 
   return (
