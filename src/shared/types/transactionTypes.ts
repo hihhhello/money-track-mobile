@@ -1,5 +1,5 @@
-import { DatePeriodKeyword } from '../utils/dateUtils';
 import { FinancialOperationTypeValue } from './globalTypes';
+import { DatePeriodKeyword } from '../utils/dateUtils';
 
 export type Transaction = {
   amount: string;
@@ -7,11 +7,11 @@ export type Transaction = {
     id: number;
     name: string;
   };
-  spending_groups: Array<{
+  spending_groups: {
     id: number;
     name: string;
     description: string | null;
-  }>;
+  }[];
   description: string | null;
   date: string;
   id: number;
