@@ -1,10 +1,14 @@
 import { useQuery } from '@tanstack/react-query';
+import { Link, Stack, useRouter } from 'expo-router';
 import { Button, Text, View } from 'react-native';
 
 import { useAuth } from '@/providers/AuthProvider';
 import { api } from '@/shared/api/api';
+import { FinancialOperationType } from '@/shared/types/globalTypes';
 
 export default function HomeScreen() {
+  const router = useRouter();
+
   const { signOut } = useAuth();
 
   const { data: transactions } = useQuery({
@@ -12,13 +16,37 @@ export default function HomeScreen() {
     queryKey: ['api.transactions.getAll'],
   });
 
-  console.log('transactions', transactions);
-
   return (
     <View>
-      <Text>Home Screen</Text>
+      <Stack.Screen
+        options={{
+          title: 'Home Screen',
+          headerStyle: { backgroundColor: '#f4511e' },
+          headerTintColor: '#fff',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+        }}
+      />
 
-      <Button title="Sign Out" onPress={signOut} />
+      <Button
+        title="Expense"
+        onPress={() => {
+          router.push({
+            pathname: '/add-transaction',
+            params: { type: FinancialOperationType.EXPENSE },
+          });
+        }}
+      />
+      <Button
+        title="Deposit"
+        onPress={() => {
+          router.push({
+            pathname: '/add-transaction',
+            params: { type: FinancialOperationType.DEPOSIT },
+          });
+        }}
+      />
     </View>
   );
 }
