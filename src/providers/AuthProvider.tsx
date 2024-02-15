@@ -49,19 +49,17 @@ export const AuthProvider = (props: PropsWithChildren) => {
   useEffect(() => {
     setIsLoading(true);
 
-    async function getSession() {
-      SecureStore.getItemAsync('session').then((storeSession) => {
-        console.log('storeSession', storeSession);
-
-        if (storeSession) {
-          setSession(JSON.parse(storeSession));
+    SecureStore.getItemAsync('session')
+      .then((storeSession) => {
+        if (!storeSession) {
+          return;
         }
 
-        setIsLoading(false);
-      });
-    }
+        setSession(JSON.parse(storeSession));
 
-    getSession();
+        setIsLoading(false);
+      })
+      .finally(() => setIsLoading(false));
   }, []);
 
   const signIn = useCallback(
@@ -89,7 +87,10 @@ export const AuthProvider = (props: PropsWithChildren) => {
           await SecureStore.setItemAsync(
             'session',
             JSON.stringify({
-              user: userInfoResponse.data,
+              user: {
+                ...userInfoResponse.data,
+                accessToken: res.data.access_token,
+              },
             }),
           );
         }
