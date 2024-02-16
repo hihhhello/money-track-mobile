@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { format, parseISO } from 'date-fns';
 import { Stack, useRouter } from 'expo-router';
 import { formatUSDDecimal } from 'hihhhello-utils';
 import { useMemo } from 'react';
@@ -84,6 +85,7 @@ export default function HomeScreen() {
           display: 'flex',
           flexDirection: 'row',
           gap: 16,
+          marginBottom: 16,
         }}
       >
         <Pressable
@@ -128,11 +130,78 @@ export default function HomeScreen() {
         </Pressable>
       </View>
 
-      <ScrollView>
-        {transactions?.map((transaction) => (
-          <Text key={transaction.id}>{transaction.amount}</Text>
-        ))}
-      </ScrollView>
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: COLORS.main.paper,
+          padding: 12,
+          borderRadius: 24,
+        }}
+      >
+        <ScrollView>
+          {transactions?.map(
+            ({
+              amount,
+              category: { name: categoryName },
+              description,
+              id,
+              date,
+              type,
+            }) => (
+              <View
+                key={id}
+                style={{
+                  backgroundColor: '#fff',
+                  marginBottom: 12,
+                  padding: 8,
+                  borderRadius: 8,
+                  display: 'flex',
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <View>
+                  <Text
+                    style={{
+                      fontSize: 16,
+                    }}
+                  >
+                    {categoryName}
+                  </Text>
+
+                  <Text>{description}</Text>
+                </View>
+
+                <View>
+                  <View>
+                    {/* <div>
+                      {recurrentTransactionId && (
+                        <RecurrentTransactionIcon className="text-main-blue" />
+                      )}
+                    </div> */}
+
+                    <Text style={{ textAlign: 'right' }}>
+                      {format(parseISO(date), 'EEE, dd MMM')}
+                    </Text>
+                  </View>
+
+                  <Text
+                    style={{
+                      color:
+                        type === FinancialOperationType.EXPENSE
+                          ? COLORS.main.orange
+                          : COLORS.main.blue,
+                      textAlign: 'right',
+                    }}
+                  >
+                    {formatUSDDecimal(parseFloat(amount))}
+                  </Text>
+                </View>
+              </View>
+            ),
+          )}
+        </ScrollView>
+      </View>
     </View>
   );
 }
