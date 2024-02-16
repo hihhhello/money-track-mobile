@@ -2,13 +2,14 @@ import { useQuery } from '@tanstack/react-query';
 import { Stack, useRouter } from 'expo-router';
 import { formatUSDDecimal } from 'hihhhello-utils';
 import { useMemo } from 'react';
-import { Pressable, View, Text } from 'react-native';
+import { Pressable, View } from 'react-native';
 
 import { api } from '@/shared/api/api';
 import { MinusIcon } from '@/shared/icons/MinusIcon';
 import { PlusIcon } from '@/shared/icons/PlusIcon';
 import { COLORS } from '@/shared/theme';
 import { FinancialOperationType } from '@/shared/types/globalTypes';
+import { Text } from '@/shared/ui/Text';
 import { getNetAmount } from '@/shared/utils/helpers';
 
 export default function HomeScreen() {

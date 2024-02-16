@@ -11,9 +11,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
     },
@@ -28,7 +26,23 @@
     },
     "plugins": [
       "expo-router",
-      "expo-secure-store"
+      "expo-secure-store",
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "node_modules/@expo-google-fonts/kanit/Kanit_100Thin.ttf",
+            "node_modules/@expo-google-fonts/kanit/Kanit_200ExtraLight.ttf",
+            "node_modules/@expo-google-fonts/kanit/Kanit_300Light.ttf",
+            "node_modules/@expo-google-fonts/kanit/Kanit_400Regular.ttf",
+            "node_modules/@expo-google-fonts/kanit/Kanit_500Medium.ttf",
+            "node_modules/@expo-google-fonts/kanit/Kanit_600SemiBold.ttf",
+            "node_modules/@expo-google-fonts/kanit/Kanit_700Bold.ttf",
+            "node_modules/@expo-google-fonts/kanit/Kanit_800ExtraBold.ttf",
+            "node_modules/@expo-google-fonts/kanit/Kanit_900Black.ttf"
+          ]
+        }
+      ]
     ],
     "scheme": "money-track"
   }
