@@ -2,6 +2,7 @@ import { Redirect, Stack } from 'expo-router';
 import { Text } from 'react-native';
 
 import { useAuth } from '@/providers/AuthProvider';
+import { COLORS } from '@/shared/theme';
 
 export default function Layout() {
   const { isLoading, session } = useAuth();
@@ -17,10 +18,15 @@ export default function Layout() {
   return (
     <Stack
       screenOptions={{
-        headerStyle: { backgroundColor: '#f4511e' },
-        headerTintColor: '#fff',
+        headerStyle: { backgroundColor: '#ffffff' },
+        headerTintColor: COLORS.main.dark,
+        headerShadowVisible: false,
         headerTitleStyle: {
           fontWeight: 'bold',
+        },
+        contentStyle: {
+          paddingHorizontal: 24,
+          backgroundColor: '#ffffff',
         },
       }}
     />
