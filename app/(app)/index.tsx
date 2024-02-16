@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Stack, useRouter } from 'expo-router';
 import { formatUSDDecimal } from 'hihhhello-utils';
 import { useMemo } from 'react';
-import { Pressable, View } from 'react-native';
+import { Pressable, ScrollView, View } from 'react-native';
 
 import { api } from '@/shared/api/api';
 import { MinusIcon } from '@/shared/icons/MinusIcon';
@@ -37,7 +37,7 @@ export default function HomeScreen() {
   );
 
   return (
-    <View>
+    <View style={{ flex: 1 }}>
       <Stack.Screen
         options={{
           title: '',
@@ -127,6 +127,12 @@ export default function HomeScreen() {
           <PlusIcon color={COLORS.main.blue} height={40} width={40} />
         </Pressable>
       </View>
+
+      <ScrollView>
+        {transactions?.map((transaction) => (
+          <Text key={transaction.id}>{transaction.amount}</Text>
+        ))}
+      </ScrollView>
     </View>
   );
 }

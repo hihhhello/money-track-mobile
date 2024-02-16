@@ -1,10 +1,13 @@
 import { Redirect, Stack } from 'expo-router';
 import { Text } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useAuth } from '@/providers/AuthProvider';
 import { COLORS } from '@/shared/theme';
 
 export default function Layout() {
+  const insets = useSafeAreaInsets();
+
   const { isLoading, session } = useAuth();
 
   if (isLoading) {
@@ -27,6 +30,7 @@ export default function Layout() {
         contentStyle: {
           paddingHorizontal: 24,
           backgroundColor: '#ffffff',
+          paddingBottom: insets.bottom,
         },
       }}
     />
