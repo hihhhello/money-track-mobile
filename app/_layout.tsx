@@ -11,6 +11,7 @@ import {
   Kanit_900Black,
 } from '@expo-google-fonts/kanit';
 import { Slot } from 'expo-router';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { AuthProvider } from '@/providers/AuthProvider';
@@ -37,7 +38,13 @@ export default function Layout() {
     <QueryClientProvider>
       <SafeAreaProvider>
         <AuthProvider>
-          <Slot />
+          <GestureHandlerRootView
+            style={{
+              flex: 1,
+            }}
+          >
+            <Slot />
+          </GestureHandlerRootView>
         </AuthProvider>
       </SafeAreaProvider>
     </QueryClientProvider>

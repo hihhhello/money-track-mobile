@@ -4,6 +4,7 @@ import { Stack, useRouter } from 'expo-router';
 import { formatUSDDecimal } from 'hihhhello-utils';
 import { useMemo } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
+import { Swipeable } from 'react-native-gesture-handler';
 
 import { api } from '@/shared/api/api';
 import { MinusIcon } from '@/shared/icons/MinusIcon';
@@ -150,66 +151,74 @@ export default function HomeScreen() {
               type,
               recurrent_id: recurrentTransactionId,
             }) => (
-              <View
+              <Swipeable
                 key={id}
-                style={{
-                  backgroundColor: '#fff',
-                  marginBottom: 12,
-                  padding: 8,
-                  borderRadius: 8,
-                  display: 'flex',
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  gap: 64,
-                }}
+                renderLeftActions={() => (
+                  <View>
+                    <Text>Hello World</Text>
+                  </View>
+                )}
               >
-                <View style={{ flex: 1 }}>
-                  <Text
-                    style={{
-                      fontSize: 16,
-                    }}
-                    numberOfLines={1}
-                  >
-                    {categoryName}
-                  </Text>
-
-                  <Text numberOfLines={1}>{description}</Text>
-                </View>
-
-                <View>
-                  <View
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'flex-end',
-                      flexDirection: 'row',
-                      gap: 4,
-                    }}
-                  >
-                    <View>
-                      {recurrentTransactionId && (
-                        <RecurrentTransactionIcon color={COLORS.main.blue} />
-                      )}
-                    </View>
-
-                    <Text style={{ textAlign: 'right' }}>
-                      {format(parseISO(date), 'EEE, dd MMM')}
+                <View
+                  style={{
+                    backgroundColor: '#fff',
+                    marginBottom: 12,
+                    padding: 8,
+                    borderRadius: 8,
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    gap: 64,
+                  }}
+                >
+                  <View style={{ flex: 1 }}>
+                    <Text
+                      style={{
+                        fontSize: 16,
+                      }}
+                      numberOfLines={1}
+                    >
+                      {categoryName}
                     </Text>
+
+                    <Text numberOfLines={1}>{description}</Text>
                   </View>
 
-                  <Text
-                    style={{
-                      color:
-                        type === FinancialOperationType.EXPENSE
-                          ? COLORS.main.orange
-                          : COLORS.main.blue,
-                      textAlign: 'right',
-                    }}
-                  >
-                    {formatUSDDecimal(parseFloat(amount))}
-                  </Text>
+                  <View>
+                    <View
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'flex-end',
+                        flexDirection: 'row',
+                        gap: 4,
+                      }}
+                    >
+                      <View>
+                        {recurrentTransactionId && (
+                          <RecurrentTransactionIcon color={COLORS.main.blue} />
+                        )}
+                      </View>
+
+                      <Text style={{ textAlign: 'right' }}>
+                        {format(parseISO(date), 'EEE, dd MMM')}
+                      </Text>
+                    </View>
+
+                    <Text
+                      style={{
+                        color:
+                          type === FinancialOperationType.EXPENSE
+                            ? COLORS.main.orange
+                            : COLORS.main.blue,
+                        textAlign: 'right',
+                      }}
+                    >
+                      {formatUSDDecimal(parseFloat(amount))}
+                    </Text>
+                  </View>
                 </View>
-              </View>
+              </Swipeable>
             ),
           )}
         </ScrollView>
