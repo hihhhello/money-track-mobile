@@ -8,8 +8,10 @@ import { Swipeable } from 'react-native-gesture-handler';
 
 import { api } from '@/shared/api/api';
 import { MinusIcon } from '@/shared/icons/MinusIcon';
+import { PencilIcon } from '@/shared/icons/PencilIcon';
 import { PlusIcon } from '@/shared/icons/PlusIcon';
 import { RecurrentTransactionIcon } from '@/shared/icons/RecurrentTransactionIcon';
+import { TrashIcon } from '@/shared/icons/TrashIcon';
 import { COLORS } from '@/shared/theme';
 import { FinancialOperationType } from '@/shared/types/globalTypes';
 import { Text } from '@/shared/ui/Text';
@@ -153,16 +155,68 @@ export default function HomeScreen() {
             }) => (
               <Swipeable
                 key={id}
-                renderLeftActions={() => (
-                  <View>
-                    <Text>Hello World</Text>
+                containerStyle={{
+                  marginBottom: 12,
+                }}
+                renderRightActions={() => (
+                  <View
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'row',
+                    }}
+                  >
+                    <Pressable
+                      style={{
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        paddingHorizontal: 16,
+                        paddingVertical: 8,
+                        backgroundColor: COLORS.main.blue,
+                        width: 80,
+                        borderTopLeftRadius: 8,
+                        borderBottomLeftRadius: 8,
+                      }}
+                    >
+                      <PencilIcon color="#fff" />
+
+                      <Text
+                        style={{
+                          color: '#fff',
+                        }}
+                      >
+                        Edit
+                      </Text>
+                    </Pressable>
+
+                    <Pressable
+                      style={{
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        paddingHorizontal: 16,
+                        paddingVertical: 8,
+                        backgroundColor: COLORS.main.orange,
+                        width: 80,
+                        borderTopRightRadius: 8,
+                        borderBottomRightRadius: 8,
+                      }}
+                    >
+                      <TrashIcon color="#fff" />
+
+                      <Text
+                        style={{
+                          color: '#fff',
+                        }}
+                      >
+                        Delete
+                      </Text>
+                    </Pressable>
                   </View>
                 )}
+                overshootLeft={false}
               >
                 <View
                   style={{
                     backgroundColor: '#fff',
-                    marginBottom: 12,
                     padding: 8,
                     borderRadius: 8,
                     display: 'flex',
