@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { format, parseISO } from 'date-fns';
 import { Stack, useRouter } from 'expo-router';
 import { formatUSDDecimal } from 'hihhhello-utils';
+import { isEmpty } from 'lodash';
 import { useMemo } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
 import { Swipeable } from 'react-native-gesture-handler';
@@ -142,7 +143,11 @@ export default function HomeScreen() {
           borderRadius: 24,
         }}
       >
-        <ScrollView>
+        <ScrollView
+          style={{
+            paddingTop: 12,
+          }}
+        >
           {transactions?.map(
             ({
               amount,
@@ -152,11 +157,14 @@ export default function HomeScreen() {
               date,
               type,
               recurrent_id: recurrentTransactionId,
+              spending_groups: spendingGroups,
             }) => (
               <Swipeable
                 key={id}
                 containerStyle={{
                   marginBottom: 12,
+                  position: 'relative',
+                  overflow: 'visible',
                 }}
                 renderRightActions={() => (
                   <View
@@ -216,6 +224,37 @@ export default function HomeScreen() {
               >
                 <View
                   style={{
+                    position: 'absolute',
+                    left: 0,
+                    top: 0,
+                    zIndex: 40,
+                    display: 'flex',
+                    transform: [{ translateY: -4 }, { translateX: 4 }],
+                    gap: 4,
+                  }}
+                >
+                  {spendingGroups?.map((group) => (
+                    <View
+                      key={group.id}
+                      style={{
+                        backgroundColor: COLORS.main.blue,
+                        paddingHorizontal: 4,
+                        borderRadius: 6,
+                      }}
+                    >
+                      <Text
+                        style={{
+                          color: '#fff',
+                        }}
+                      >
+                        {group.name}
+                      </Text>
+                    </View>
+                  ))}
+                </View>
+
+                <View
+                  style={{
                     backgroundColor: '#fff',
                     padding: 8,
                     borderRadius: 8,
@@ -223,6 +262,7 @@ export default function HomeScreen() {
                     flexDirection: 'row',
                     justifyContent: 'space-between',
                     gap: 64,
+                    paddingTop: !isEmpty(spendingGroups) ? 16 : 0,
                   }}
                 >
                   <View style={{ flex: 1 }}>
