@@ -8,6 +8,7 @@ import { Pressable, ScrollView, View } from 'react-native';
 import { api } from '@/shared/api/api';
 import { MinusIcon } from '@/shared/icons/MinusIcon';
 import { PlusIcon } from '@/shared/icons/PlusIcon';
+import { RecurrentTransactionIcon } from '@/shared/icons/RecurrentTransactionIcon';
 import { COLORS } from '@/shared/theme';
 import { FinancialOperationType } from '@/shared/types/globalTypes';
 import { Text } from '@/shared/ui/Text';
@@ -147,6 +148,7 @@ export default function HomeScreen() {
               id,
               date,
               type,
+              recurrent_id: recurrentTransactionId,
             }) => (
               <View
                 key={id}
@@ -173,12 +175,20 @@ export default function HomeScreen() {
                 </View>
 
                 <View>
-                  <View>
-                    {/* <div>
+                  <View
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'flex-end',
+                      flexDirection: 'row',
+                      gap: 4,
+                    }}
+                  >
+                    <View>
                       {recurrentTransactionId && (
-                        <RecurrentTransactionIcon className="text-main-blue" />
+                        <RecurrentTransactionIcon color={COLORS.main.blue} />
                       )}
-                    </div> */}
+                    </View>
 
                     <Text style={{ textAlign: 'right' }}>
                       {format(parseISO(date), 'EEE, dd MMM')}
