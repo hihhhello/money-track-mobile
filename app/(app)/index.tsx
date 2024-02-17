@@ -160,18 +160,20 @@ export default function HomeScreen() {
                   display: 'flex',
                   flexDirection: 'row',
                   justifyContent: 'space-between',
+                  gap: 64,
                 }}
               >
-                <View>
+                <View style={{ flex: 1 }}>
                   <Text
                     style={{
                       fontSize: 16,
                     }}
+                    numberOfLines={1}
                   >
                     {categoryName}
                   </Text>
 
-                  <Text>{description}</Text>
+                  <Text numberOfLines={1}>{description}</Text>
                 </View>
 
                 <View>
