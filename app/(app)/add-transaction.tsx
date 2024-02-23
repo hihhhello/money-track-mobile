@@ -64,27 +64,7 @@ export default function AddTransactionScreen() {
   });
 
   const createTransactionMutation = useMutation({
-    mutationFn: () => {
-      if (
-        !transactionValues.amount ||
-        !selectedCategoryId ||
-        !transactionType
-      ) {
-        return Promise.reject(new Error('Invalid input.'));
-      }
-
-      return api.transactions.createOne({
-        body: {
-          amount: transactionValues.amount.toString(),
-          category_id: selectedCategoryId,
-          date: formatISO(transactionValues.date, {
-            representation: 'date',
-          }),
-          type: transactionType,
-          description: transactionValues.description,
-        },
-      });
-    },
+    mutationFn: api.transactions.createOne,
     mutationKey: ['api.transactions.createOne'],
     onSuccess: () => {
       queryClient
@@ -99,6 +79,24 @@ export default function AddTransactionScreen() {
       console.log(error.message);
     },
   });
+
+  const handleCreateTransaction = () => {
+    if (!transactionValues.amount || !selectedCategoryId || !transactionType) {
+      return;
+    }
+
+    createTransactionMutation.mutate({
+      body: {
+        amount: transactionValues.amount.toString(),
+        category_id: selectedCategoryId,
+        date: formatISO(transactionValues.date, {
+          representation: 'date',
+        }),
+        type: transactionType,
+        description: transactionValues.description,
+      },
+    });
+  };
 
   return (
     <Pressable
@@ -233,12 +231,7 @@ export default function AddTransactionScreen() {
         {createTransactionMutation.isPending ? (
           <ActivityIndicator />
         ) : (
-          <Button
-            title="Add"
-            onPress={() => {
-              createTransactionMutation.mutate();
-            }}
-          />
+          <Button title="Add" onPress={handleCreateTransaction} />
         )}
       </View>
     </Pressable>
