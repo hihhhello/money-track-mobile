@@ -1,10 +1,17 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { format, parseISO } from 'date-fns';
 import { Stack, useRouter } from 'expo-router';
 import { formatUSDDecimal } from 'hihhhello-utils';
 import { isEmpty } from 'lodash';
 import { useMemo } from 'react';
-import { Pressable, ScrollView, View } from 'react-native';
+import {
+  ActivityIndicator,
+  FlatList,
+  Pressable,
+  RefreshControl,
+  ScrollView,
+  View,
+} from 'react-native';
 import { Swipeable } from 'react-native-gesture-handler';
 
 import { api } from '@/shared/api/api';
@@ -21,15 +28,15 @@ import { getNetAmount } from '@/shared/utils/helpers';
 export default function HomeScreen() {
   const router = useRouter();
 
-  const { data: transactions } = useQuery({
+  const transactionsQuery = useQuery({
     queryFn: api.transactions.getAll,
     queryKey: ['api.transactions.getAll'],
   });
 
   const totalTransactionsAmount = useMemo(
     () =>
-      transactions
-        ? transactions.reduce(
+      transactionsQuery.data
+        ? transactionsQuery.data.reduce(
             (totalExpensesAccumulator, transaction) =>
               totalExpensesAccumulator +
               getNetAmount({
@@ -39,8 +46,22 @@ export default function HomeScreen() {
             0,
           )
         : 0,
-    [transactions],
+    [transactionsQuery.data],
   );
+
+  const deleteTransactionMutation = useMutation({
+    mutationFn: api.transactions.deleteOne,
+    mutationKey: ['api.transactions.deleteOne'],
+    onSuccess: () => transactionsQuery.refetch(),
+  });
+
+  const handleDeleteTransaction = (id: number) => () => {
+    deleteTransactionMutation.mutate({
+      params: {
+        transactionId: id,
+      },
+    });
+  };
 
   return (
     <View style={{ flex: 1 }}>
@@ -143,13 +164,23 @@ export default function HomeScreen() {
           borderRadius: 24,
         }}
       >
-        <ScrollView
+        <FlatList
           style={{
             paddingTop: 12,
           }}
-        >
-          {transactions?.map(
-            ({
+          refreshControl={
+            <RefreshControl
+              refreshing={
+                transactionsQuery.isFetching ||
+                deleteTransactionMutation.isPending
+              }
+              onRefresh={transactionsQuery.refetch}
+            />
+          }
+          data={transactionsQuery.data}
+          keyExtractor={(item) => String(item.id)}
+          renderItem={({
+            item: {
               amount,
               category: { name: categoryName },
               description,
@@ -158,164 +189,165 @@ export default function HomeScreen() {
               type,
               recurrent_id: recurrentTransactionId,
               spending_groups: spendingGroups,
-            }) => (
-              <Swipeable
-                key={id}
-                containerStyle={{
-                  marginBottom: 12,
-                  position: 'relative',
-                  overflow: 'visible',
+            },
+          }) => (
+            <Swipeable
+              key={id}
+              containerStyle={{
+                marginBottom: 12,
+                position: 'relative',
+                overflow: 'visible',
+              }}
+              renderRightActions={() => (
+                <View
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                  }}
+                >
+                  <Pressable
+                    style={{
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      paddingHorizontal: 16,
+                      paddingVertical: 8,
+                      backgroundColor: COLORS.main.blue,
+                      width: 80,
+                      borderTopLeftRadius: 8,
+                      borderBottomLeftRadius: 8,
+                    }}
+                  >
+                    <PencilIcon color="#fff" />
+
+                    <Text
+                      style={{
+                        color: '#fff',
+                      }}
+                    >
+                      Edit
+                    </Text>
+                  </Pressable>
+
+                  <Pressable
+                    style={{
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      paddingHorizontal: 16,
+                      paddingVertical: 8,
+                      backgroundColor: COLORS.main.orange,
+                      width: 80,
+                      borderTopRightRadius: 8,
+                      borderBottomRightRadius: 8,
+                    }}
+                    onPress={handleDeleteTransaction(id)}
+                  >
+                    <TrashIcon color="#fff" />
+
+                    <Text
+                      style={{
+                        color: '#fff',
+                      }}
+                    >
+                      Delete
+                    </Text>
+                  </Pressable>
+                </View>
+              )}
+              overshootLeft={false}
+            >
+              <View
+                style={{
+                  position: 'absolute',
+                  left: 0,
+                  top: 0,
+                  zIndex: 40,
+                  display: 'flex',
+                  transform: [{ translateY: -4 }, { translateX: 4 }],
+                  gap: 4,
                 }}
-                renderRightActions={() => (
+              >
+                {spendingGroups?.map((group) => (
+                  <View
+                    key={group.id}
+                    style={{
+                      backgroundColor: COLORS.main.blue,
+                      paddingHorizontal: 4,
+                      borderRadius: 6,
+                    }}
+                  >
+                    <Text
+                      style={{
+                        color: '#fff',
+                      }}
+                    >
+                      {group.name}
+                    </Text>
+                  </View>
+                ))}
+              </View>
+
+              <View
+                style={{
+                  backgroundColor: '#fff',
+                  padding: 8,
+                  borderRadius: 8,
+                  display: 'flex',
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  gap: 64,
+                  paddingTop: !isEmpty(spendingGroups) ? 16 : 0,
+                }}
+              >
+                <View style={{ flex: 1 }}>
+                  <Text
+                    style={{
+                      fontSize: 16,
+                    }}
+                    numberOfLines={1}
+                  >
+                    {categoryName}
+                  </Text>
+
+                  <Text numberOfLines={1}>{description}</Text>
+                </View>
+
+                <View>
                   <View
                     style={{
                       display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'flex-end',
                       flexDirection: 'row',
+                      gap: 4,
                     }}
                   >
-                    <Pressable
-                      style={{
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        paddingHorizontal: 16,
-                        paddingVertical: 8,
-                        backgroundColor: COLORS.main.blue,
-                        width: 80,
-                        borderTopLeftRadius: 8,
-                        borderBottomLeftRadius: 8,
-                      }}
-                    >
-                      <PencilIcon color="#fff" />
-
-                      <Text
-                        style={{
-                          color: '#fff',
-                        }}
-                      >
-                        Edit
-                      </Text>
-                    </Pressable>
-
-                    <Pressable
-                      style={{
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        paddingHorizontal: 16,
-                        paddingVertical: 8,
-                        backgroundColor: COLORS.main.orange,
-                        width: 80,
-                        borderTopRightRadius: 8,
-                        borderBottomRightRadius: 8,
-                      }}
-                    >
-                      <TrashIcon color="#fff" />
-
-                      <Text
-                        style={{
-                          color: '#fff',
-                        }}
-                      >
-                        Delete
-                      </Text>
-                    </Pressable>
-                  </View>
-                )}
-                overshootLeft={false}
-              >
-                <View
-                  style={{
-                    position: 'absolute',
-                    left: 0,
-                    top: 0,
-                    zIndex: 40,
-                    display: 'flex',
-                    transform: [{ translateY: -4 }, { translateX: 4 }],
-                    gap: 4,
-                  }}
-                >
-                  {spendingGroups?.map((group) => (
-                    <View
-                      key={group.id}
-                      style={{
-                        backgroundColor: COLORS.main.blue,
-                        paddingHorizontal: 4,
-                        borderRadius: 6,
-                      }}
-                    >
-                      <Text
-                        style={{
-                          color: '#fff',
-                        }}
-                      >
-                        {group.name}
-                      </Text>
-                    </View>
-                  ))}
-                </View>
-
-                <View
-                  style={{
-                    backgroundColor: '#fff',
-                    padding: 8,
-                    borderRadius: 8,
-                    display: 'flex',
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    gap: 64,
-                    paddingTop: !isEmpty(spendingGroups) ? 16 : 0,
-                  }}
-                >
-                  <View style={{ flex: 1 }}>
-                    <Text
-                      style={{
-                        fontSize: 16,
-                      }}
-                      numberOfLines={1}
-                    >
-                      {categoryName}
-                    </Text>
-
-                    <Text numberOfLines={1}>{description}</Text>
-                  </View>
-
-                  <View>
-                    <View
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'flex-end',
-                        flexDirection: 'row',
-                        gap: 4,
-                      }}
-                    >
-                      <View>
-                        {recurrentTransactionId && (
-                          <RecurrentTransactionIcon color={COLORS.main.blue} />
-                        )}
-                      </View>
-
-                      <Text style={{ textAlign: 'right' }}>
-                        {format(parseISO(date), 'EEE, dd MMM')}
-                      </Text>
+                    <View>
+                      {recurrentTransactionId && (
+                        <RecurrentTransactionIcon color={COLORS.main.blue} />
+                      )}
                     </View>
 
-                    <Text
-                      style={{
-                        color:
-                          type === FinancialOperationType.EXPENSE
-                            ? COLORS.main.orange
-                            : COLORS.main.blue,
-                        textAlign: 'right',
-                      }}
-                    >
-                      {formatUSDDecimal(parseFloat(amount))}
+                    <Text style={{ textAlign: 'right' }}>
+                      {format(parseISO(date), 'EEE, dd MMM')}
                     </Text>
                   </View>
+
+                  <Text
+                    style={{
+                      color:
+                        type === FinancialOperationType.EXPENSE
+                          ? COLORS.main.orange
+                          : COLORS.main.blue,
+                      textAlign: 'right',
+                    }}
+                  >
+                    {formatUSDDecimal(parseFloat(amount))}
+                  </Text>
                 </View>
-              </Swipeable>
-            ),
+              </View>
+            </Swipeable>
           )}
-        </ScrollView>
+        />
       </View>
     </View>
   );
