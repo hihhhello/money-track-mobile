@@ -70,7 +70,7 @@ export default function AddTransactionScreen() {
         !selectedCategoryId ||
         !transactionType
       ) {
-        return Promise.reject();
+        return Promise.reject(new Error('Invalid input.'));
       }
 
       return api.transactions.createOne({
@@ -94,6 +94,9 @@ export default function AddTransactionScreen() {
         .then(() => {
           router.back();
         });
+    },
+    onError: (error) => {
+      console.log(error.message);
     },
   });
 
