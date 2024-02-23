@@ -175,7 +175,7 @@ export default function HomeScreen() {
           renderItem={({
             item: {
               amount,
-              category: { name: categoryName },
+              category: { name: categoryName, id: categoryId },
               description,
               id,
               date,
@@ -208,6 +208,19 @@ export default function HomeScreen() {
                       width: 80,
                       borderTopLeftRadius: 8,
                       borderBottomLeftRadius: 8,
+                    }}
+                    onPress={() => {
+                      router.push({
+                        pathname: '/edit-transaction',
+                        params: {
+                          type,
+                          id,
+                          categoryId,
+                          description,
+                          amount,
+                          date,
+                        },
+                      });
                     }}
                   >
                     <PencilIcon color="#fff" />

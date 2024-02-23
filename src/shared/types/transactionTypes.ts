@@ -1,5 +1,4 @@
 import { FinancialOperationTypeValue } from './globalTypes';
-import { DatePeriodKeyword } from '../utils/dateUtils';
 
 export type Transaction = {
   amount: string;
@@ -22,14 +21,6 @@ export type Transaction = {
 };
 
 export type APITransactionPeriodFilter = 'today' | 'month' | 'year';
-
-export const TransactionPeriodFilter = {
-  ...DatePeriodKeyword,
-  ALL: 'all',
-} as const;
-
-export type TransactionPeriodFilterType =
-  (typeof TransactionPeriodFilter)[keyof typeof TransactionPeriodFilter];
 
 export type TransactionsByCategory = {
   [category: string]: {
