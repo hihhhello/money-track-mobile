@@ -4,14 +4,7 @@ import { Stack, useRouter } from 'expo-router';
 import { formatUSDDecimal } from 'hihhhello-utils';
 import { isEmpty } from 'lodash';
 import { useMemo } from 'react';
-import {
-  ActivityIndicator,
-  FlatList,
-  Pressable,
-  RefreshControl,
-  ScrollView,
-  View,
-} from 'react-native';
+import { FlatList, Pressable, RefreshControl, View } from 'react-native';
 import { Swipeable } from 'react-native-gesture-handler';
 
 import { api } from '@/shared/api/api';
