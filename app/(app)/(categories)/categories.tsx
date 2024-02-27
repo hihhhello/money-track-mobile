@@ -1,6 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
-import { Stack } from 'expo-router';
-import { FlatList, Pressable, RefreshControl, View } from 'react-native';
+import { Link } from 'expo-router';
+import {
+  Button,
+  FlatList,
+  Pressable,
+  RefreshControl,
+  View,
+} from 'react-native';
 
 import { api } from '@/shared/api/api';
 import { SquaresPlusIcon } from '@/shared/icons/SquaresPlusIcon';
@@ -15,12 +21,6 @@ export default function CategoriesScreen() {
 
   return (
     <View style={{ flex: 1 }}>
-      <Stack.Screen
-        options={{
-          title: 'Categories',
-        }}
-      />
-
       <FlatList
         data={categoriesQuery.data}
         refreshControl={
@@ -71,6 +71,10 @@ export default function CategoriesScreen() {
           </Pressable>
         )}
       />
+
+      <Link href="add-category" asChild>
+        <Button title="Add new category" />
+      </Link>
     </View>
   );
 }

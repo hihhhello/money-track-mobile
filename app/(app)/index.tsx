@@ -60,6 +60,9 @@ export default function HomeScreen() {
     <View style={{ flex: 1 }}>
       <Stack.Screen
         options={{
+          /**
+           * TODO: find fix
+           */
           title: '',
         }}
       />

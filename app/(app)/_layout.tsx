@@ -41,6 +41,7 @@ export default function Layout() {
         options={{
           tabBarLabel: 'Home',
           tabBarIcon: ({ color }) => <BarChartIcon color={color} />,
+          tabBarActiveTintColor: COLORS.main.blue,
         }}
       />
 
@@ -59,10 +60,12 @@ export default function Layout() {
       />
 
       <Tabs.Screen
-        name="categories"
+        name="(categories)"
         options={{
           tabBarLabel: 'Categories',
           tabBarIcon: ({ color }) => <SquaresPlusIcon color={color} />,
+          tabBarActiveTintColor: COLORS.main.blue,
+          title: '',
         }}
       />
     </Tabs>
