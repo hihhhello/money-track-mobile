@@ -9,6 +9,7 @@ import { COLORS } from '../theme';
 export const TextInput = ({ style, ...props }: BaseTextInputProps) => (
   <BaseTextInput
     {...props}
+    placeholderTextColor={COLORS.gray[400]}
     style={[
       {
         fontFamily: Platform.select({
