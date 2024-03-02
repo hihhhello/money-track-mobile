@@ -31,6 +31,14 @@ export default function Layout() {
           title: 'Add new category',
         }}
       />
+
+      <Stack.Screen
+        name="edit-category"
+        options={{
+          presentation: 'modal',
+          title: 'Edit category',
+        }}
+      />
     </Stack>
   );
 }

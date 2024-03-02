@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { Link, useNavigation } from 'expo-router';
+import { Link, router, useNavigation } from 'expo-router';
 import { useCallback, useEffect, useMemo } from 'react';
 import {
   Button,
@@ -81,7 +81,18 @@ export default function CategoriesScreen() {
           numColumns={3}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
-            <Pressable>
+            <Pressable
+              onPress={() => {
+                router.push({
+                  pathname: 'edit-category',
+                  params: {
+                    categoryId: item.id,
+                    categoryType: item.type,
+                    categoryName: item.name,
+                  },
+                });
+              }}
+            >
               <View
                 style={{
                   display: 'flex',
