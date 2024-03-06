@@ -3,7 +3,7 @@ import { format, parseISO } from 'date-fns';
 import { Stack, useRouter } from 'expo-router';
 import { formatUSDDecimal } from 'hihhhello-utils';
 import { isEmpty } from 'lodash';
-import { useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { FlatList, Pressable, RefreshControl, View } from 'react-native';
 import { Swipeable } from 'react-native-gesture-handler';
 
@@ -15,11 +15,20 @@ import { RecurrentTransactionIcon } from '@/shared/icons/RecurrentTransactionIco
 import { TrashIcon } from '@/shared/icons/TrashIcon';
 import { COLORS } from '@/shared/theme';
 import { FinancialOperationType } from '@/shared/types/globalTypes';
+import {
+  TransactionPeriodFilter,
+  TransactionPeriodFilterType,
+} from '@/shared/types/transactionTypes';
 import { Text } from '@/shared/ui/Text';
+import { TransactionsPeriodFilterSelect } from '@/shared/ui/TransactionsPeriodFilterSelect';
 import { getNetAmount } from '@/shared/utils/helpers';
 
 export default function HomeScreen() {
   const router = useRouter();
+
+  const [transactionsFilter, setTransactionsFilter] =
+    useState<TransactionPeriodFilterType>(TransactionPeriodFilter.MONTH);
+  const [dateFilter, setDateFilter] = useState<Date>(new Date());
 
   const transactionsQuery = useQuery({
     queryFn: api.transactions.getAll,
@@ -56,6 +65,14 @@ export default function HomeScreen() {
     });
   };
 
+  const handleChangeFilter = useCallback(
+    (newFilter: TransactionPeriodFilterType) => {
+      setTransactionsFilter(newFilter);
+      setDateFilter(new Date());
+    },
+    [],
+  );
+
   return (
     <View style={{ flex: 1 }}>
       <Stack.Screen
@@ -66,6 +83,21 @@ export default function HomeScreen() {
           title: '',
         }}
       />
+
+      <View
+        style={{
+          marginBottom: 16,
+          display: 'flex',
+          gap: 16,
+          flexDirection: 'row',
+          zIndex: 10,
+        }}
+      >
+        <TransactionsPeriodFilterSelect
+          value={transactionsFilter}
+          handleChangeValue={handleChangeFilter}
+        />
+      </View>
 
       <View
         style={{
@@ -117,15 +149,20 @@ export default function HomeScreen() {
               params: { type: FinancialOperationType.EXPENSE },
             });
           }}
-          style={{
-            backgroundColor: COLORS.main.blue,
-            flex: 1,
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            borderRadius: 24,
-            paddingVertical: 8,
-          }}
+          style={({ pressed }) => [
+            pressed && {
+              opacity: 0.8,
+            },
+            {
+              backgroundColor: COLORS.main.blue,
+              flex: 1,
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              borderRadius: 24,
+              paddingVertical: 8,
+            },
+          ]}
         >
           <MinusIcon color={COLORS.main.white} height={40} width={40} />
         </Pressable>
@@ -137,16 +174,21 @@ export default function HomeScreen() {
               params: { type: FinancialOperationType.DEPOSIT },
             });
           }}
-          style={{
-            borderWidth: 6,
-            borderColor: COLORS.main.blue,
-            flex: 1,
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            borderRadius: 24,
-            paddingVertical: 8,
-          }}
+          style={({ pressed }) => [
+            pressed && {
+              opacity: 0.8,
+            },
+            {
+              borderWidth: 6,
+              borderColor: COLORS.main.blue,
+              flex: 1,
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              borderRadius: 24,
+              paddingVertical: 8,
+            },
+          ]}
         >
           <PlusIcon color={COLORS.main.blue} height={40} width={40} />
         </Pressable>
@@ -160,6 +202,9 @@ export default function HomeScreen() {
           borderRadius: 24,
         }}
       >
+        {/* 
+        TODO: improve performance by decomposing or using RecyclerListView
+         */}
         <FlatList
           style={{
             paddingTop: 12,
