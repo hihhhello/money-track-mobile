@@ -121,6 +121,7 @@ export const TransactionsPeriodFilterSelect = ({
             <Pressable
               onPress={() => {
                 handleChangeValue(period);
+                handleToggleMenu();
               }}
               key={period}
               style={({ pressed }) => [
