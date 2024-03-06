@@ -1,8 +1,8 @@
 import { forwardRef } from 'react';
 import Svg, { Path, SvgProps } from 'react-native-svg';
 
-export const ChevronDownIcon = forwardRef<Svg>(
-  ({ ...iconProps }: SvgProps, ref) => {
+export const ChevronDownIcon = forwardRef<Svg, SvgProps>(
+  ({ ...iconProps }, ref) => {
     return (
       <Svg
         ref={ref}
