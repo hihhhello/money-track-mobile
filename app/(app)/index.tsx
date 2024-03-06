@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { format, parseISO } from 'date-fns';
+import { format, formatISO, parseISO } from 'date-fns';
 import { Stack, useRouter } from 'expo-router';
 import { formatUSDDecimal } from 'hihhhello-utils';
 import { isEmpty } from 'lodash';
@@ -22,6 +22,10 @@ import {
 import { Text } from '@/shared/ui/Text';
 import { TransactionsDateFilter } from '@/shared/ui/TransactionsDateFilter';
 import { TransactionsPeriodFilterSelect } from '@/shared/ui/TransactionsPeriodFilterSelect';
+import {
+  DATE_KEYWORD_TO_DATE_RANGE,
+  DateRange,
+} from '@/shared/utils/dateUtils';
 import { getNetAmount } from '@/shared/utils/helpers';
 
 export default function HomeScreen() {
@@ -33,9 +37,46 @@ export default function HomeScreen() {
     new Date(),
   );
 
+  const transactionsDateRange: DateRange | undefined = useMemo(() => {
+    if (transactionsPeriodFilter === TransactionPeriodFilter.ALL) {
+      return undefined;
+    }
+
+    if (transactionsPeriodFilter === TransactionPeriodFilter.MONTH) {
+      return DATE_KEYWORD_TO_DATE_RANGE[TransactionPeriodFilter.MONTH]({
+        referenceDate: transactionsDateFilter,
+      });
+    }
+
+    if (transactionsPeriodFilter === TransactionPeriodFilter.YEAR) {
+      return DATE_KEYWORD_TO_DATE_RANGE[TransactionPeriodFilter.YEAR]({
+        referenceDate: transactionsDateFilter,
+      });
+    }
+
+    return DATE_KEYWORD_TO_DATE_RANGE[TransactionPeriodFilter.DAY]({
+      referenceDate: transactionsDateFilter,
+    });
+  }, [transactionsDateFilter, transactionsPeriodFilter]);
+
   const transactionsQuery = useQuery({
-    queryFn: api.transactions.getAll,
-    queryKey: ['api.transactions.getAll'],
+    queryFn: ({ queryKey }) => {
+      const dateRange = queryKey[1] as unknown as DateRange;
+
+      return api.transactions.getAll({
+        searchParams: {
+          ...(dateRange && {
+            endDate: dateRange.endDate
+              ? formatISO(dateRange.endDate, { representation: 'date' })
+              : undefined,
+            startDate: formatISO(dateRange.startDate, {
+              representation: 'date',
+            }),
+          }),
+        },
+      });
+    },
+    queryKey: ['api.transactions.getAll', transactionsDateRange],
   });
 
   const totalTransactionsAmount = useMemo(
