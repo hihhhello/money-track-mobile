@@ -20,15 +20,18 @@ import {
   TransactionPeriodFilterType,
 } from '@/shared/types/transactionTypes';
 import { Text } from '@/shared/ui/Text';
+import { TransactionsDateFilter } from '@/shared/ui/TransactionsDateFilter';
 import { TransactionsPeriodFilterSelect } from '@/shared/ui/TransactionsPeriodFilterSelect';
 import { getNetAmount } from '@/shared/utils/helpers';
 
 export default function HomeScreen() {
   const router = useRouter();
 
-  const [transactionsFilter, setTransactionsFilter] =
+  const [transactionsPeriodFilter, setTransactionsPeriodFilter] =
     useState<TransactionPeriodFilterType>(TransactionPeriodFilter.MONTH);
-  const [dateFilter, setDateFilter] = useState<Date>(new Date());
+  const [transactionsDateFilter, setTransactionsDateFilter] = useState<Date>(
+    new Date(),
+  );
 
   const transactionsQuery = useQuery({
     queryFn: api.transactions.getAll,
@@ -67,8 +70,8 @@ export default function HomeScreen() {
 
   const handleChangeFilter = useCallback(
     (newFilter: TransactionPeriodFilterType) => {
-      setTransactionsFilter(newFilter);
-      setDateFilter(new Date());
+      setTransactionsPeriodFilter(newFilter);
+      setTransactionsDateFilter(new Date());
     },
     [],
   );
@@ -94,9 +97,17 @@ export default function HomeScreen() {
         }}
       >
         <TransactionsPeriodFilterSelect
-          value={transactionsFilter}
+          value={transactionsPeriodFilter}
           handleChangeValue={handleChangeFilter}
         />
+
+        {transactionsPeriodFilter !== TransactionPeriodFilter.ALL && (
+          <TransactionsDateFilter
+            handleChangeValue={setTransactionsDateFilter}
+            period={transactionsPeriodFilter}
+            value={transactionsDateFilter}
+          />
+        )}
       </View>
 
       <View
