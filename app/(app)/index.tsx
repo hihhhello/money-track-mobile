@@ -18,6 +18,7 @@ import { FinancialOperationType } from '@/shared/types/globalTypes';
 import {
   TransactionPeriodFilter,
   TransactionPeriodFilterType,
+  TransactionsByCategory,
 } from '@/shared/types/transactionTypes';
 import { Text } from '@/shared/ui/Text';
 import { TransactionsDateFilter } from '@/shared/ui/TransactionsDateFilter';
@@ -115,6 +116,37 @@ export default function HomeScreen() {
       setTransactionsDateFilter(new Date());
     },
     [],
+  );
+
+  const transactionsByCategory = Object.fromEntries(
+    Object.entries(
+      (transactionsQuery.data ?? []).reduce<TransactionsByCategory>(
+        (acc, transaction) => {
+          const category = transaction.category.name;
+
+          const updatedCategoryTransactions = [
+            ...(acc[category]?.transactions ?? []),
+            transaction,
+          ];
+
+          const updatedTotalAmount =
+            (acc[category]?.totalAmount ?? 0) - parseFloat(transaction.amount);
+
+          return {
+            ...acc,
+            [category]: {
+              transactions: updatedCategoryTransactions,
+              totalAmount: updatedTotalAmount,
+              type:
+                updatedTotalAmount >= 0
+                  ? FinancialOperationType.DEPOSIT
+                  : FinancialOperationType.EXPENSE,
+            },
+          };
+        },
+        {},
+      ),
+    ).sort(([, a], [, b]) => a.totalAmount - b.totalAmount),
   );
 
   return (
