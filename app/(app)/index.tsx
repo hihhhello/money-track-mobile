@@ -295,6 +295,7 @@ export default function HomeScreen() {
             display: 'flex',
             flexDirection: 'row',
             justifyContent: 'flex-end',
+            marginBottom: 12,
           }}
         >
           <Pressable
