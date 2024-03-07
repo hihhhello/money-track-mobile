@@ -11,7 +11,9 @@ import { api } from '@/shared/api/api';
 import { MinusIcon } from '@/shared/icons/MinusIcon';
 import { PencilIcon } from '@/shared/icons/PencilIcon';
 import { PlusIcon } from '@/shared/icons/PlusIcon';
+import { QueueListIcon } from '@/shared/icons/QueueListIcon';
 import { RecurrentTransactionIcon } from '@/shared/icons/RecurrentTransactionIcon';
+import { TagIcon } from '@/shared/icons/TagIcon';
 import { TrashIcon } from '@/shared/icons/TrashIcon';
 import { COLORS } from '@/shared/theme';
 import { FinancialOperationType } from '@/shared/types/globalTypes';
@@ -148,6 +150,8 @@ export default function HomeScreen() {
       ),
     ).sort(([, a], [, b]) => a.totalAmount - b.totalAmount),
   );
+
+  const [view, setView] = useState<'list' | 'category'>('list');
 
   return (
     <View style={{ flex: 1 }}>
@@ -286,6 +290,31 @@ export default function HomeScreen() {
           borderRadius: 24,
         }}
       >
+        <View
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'flex-end',
+          }}
+        >
+          <Pressable
+            style={{
+              borderRadius: 6,
+              backgroundColor: COLORS.main.blue,
+              padding: 4,
+            }}
+            onPress={() =>
+              setView((prev) => (prev === 'category' ? 'list' : 'category'))
+            }
+          >
+            {view === 'list' ? (
+              <QueueListIcon color="#fff" />
+            ) : (
+              <TagIcon color="#fff" />
+            )}
+          </Pressable>
+        </View>
+
         {/* 
         TODO: improve performance by decomposing or using RecyclerListView
          */}
