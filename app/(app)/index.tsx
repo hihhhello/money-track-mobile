@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { format, formatISO, parseISO } from 'date-fns';
 import { Stack, useRouter } from 'expo-router';
-import { formatUSDDecimal } from 'hihhhello-utils';
+import { formatUSDDecimal, useBoolean } from 'hihhhello-utils';
 import { isEmpty } from 'lodash';
 import { useCallback, useMemo, useState } from 'react';
 import { FlatList, Pressable, RefreshControl, View } from 'react-native';
@@ -17,8 +17,12 @@ import { RecurrentTransactionIcon } from '@/shared/icons/RecurrentTransactionIco
 import { TagIcon } from '@/shared/icons/TagIcon';
 import { TrashIcon } from '@/shared/icons/TrashIcon';
 import { COLORS } from '@/shared/theme';
-import { FinancialOperationType } from '@/shared/types/globalTypes';
 import {
+  FinancialOperationType,
+  FinancialOperationTypeValue,
+} from '@/shared/types/globalTypes';
+import {
+  Transaction,
   TransactionPeriodFilter,
   TransactionPeriodFilterType,
   TransactionsByCategory,
@@ -333,94 +337,9 @@ export default function HomeScreen() {
             }
             data={Object.entries(transactionsByCategory)}
             keyExtractor={([categoryName]) => categoryName}
-            renderItem={({ item: [categoryName, record] }) => (
-              <Pressable
-                style={{
-                  marginBottom: 12,
-                }}
-              >
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    borderRadius: 8,
-                    backgroundColor: '#fff',
-                    paddingHorizontal: 16,
-                    paddingVertical: 4,
-                    paddingRight: 8,
-                    flex: 1,
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                  }}
-                >
-                  <View
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      gap: 8,
-                    }}
-                  >
-                    <Text
-                      style={{
-                        textAlign: 'left',
-                      }}
-                      numberOfLines={1}
-                    >
-                      {categoryName}
-                    </Text>
-
-                    <View
-                      style={{
-                        borderRadius: 6,
-                        backgroundColor: alpha(COLORS.main.blue, 0.1),
-                        paddingHorizontal: 8,
-                        paddingVertical: 4,
-                        borderWidth: 1,
-                        borderColor: alpha(COLORS.main.blue, 0.1),
-                      }}
-                    >
-                      <Text
-                        style={{
-                          color: COLORS.main.blue,
-                          fontSize: 12,
-                        }}
-                      >
-                        {record.transactions.length}
-                      </Text>
-                    </View>
-                  </View>
-
-                  <View
-                    style={{
-                      gap: 8,
-                      flexDirection: 'row',
-                    }}
-                  >
-                    <Text
-                      numberOfLines={1}
-                      style={[
-                        record.type === FinancialOperationType.EXPENSE
-                          ? {
-                              color: COLORS.main.orange,
-                            }
-                          : {
-                              color: COLORS.main.blue,
-                            },
-                      ]}
-                    >
-                      {formatUSDDecimal(Math.abs(record.totalAmount))}
-                    </Text>
-
-                    <ChevronDownIcon
-                      style={{
-                        transform: [{ rotate: `${true ? 0 : 180}deg` }],
-                      }}
-                      color="#000"
-                    />
-                  </View>
-                </View>
-              </Pressable>
-            )}
+            renderItem={({ item: [categoryName, record] }) => {
+              return <CategoryItem categoryName={categoryName} {...record} />;
+            }}
           />
         )}
 
@@ -630,3 +549,302 @@ export default function HomeScreen() {
     </View>
   );
 }
+
+const CategoryItem = ({
+  categoryName,
+  totalAmount,
+  transactions,
+  type,
+}: {
+  transactions: Transaction[];
+  totalAmount: number;
+  type: FinancialOperationTypeValue;
+  categoryName: string;
+}) => {
+  const { value: isOpen, toggle } = useBoolean(false);
+
+  const router = useRouter();
+
+  return (
+    <View>
+      <Pressable
+        style={{
+          marginBottom: 12,
+        }}
+        onPress={toggle}
+      >
+        <View
+          style={{
+            flexDirection: 'row',
+            borderRadius: 8,
+            backgroundColor: '#fff',
+            paddingHorizontal: 16,
+            paddingVertical: 4,
+            paddingRight: 8,
+            flex: 1,
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
+          <View
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: 8,
+            }}
+          >
+            <Text
+              style={{
+                textAlign: 'left',
+              }}
+              numberOfLines={1}
+            >
+              {categoryName}
+            </Text>
+
+            <View
+              style={{
+                borderRadius: 6,
+                backgroundColor: alpha(COLORS.main.blue, 0.1),
+                paddingHorizontal: 8,
+                paddingVertical: 4,
+                borderWidth: 1,
+                borderColor: alpha(COLORS.main.blue, 0.1),
+              }}
+            >
+              <Text
+                style={{
+                  color: COLORS.main.blue,
+                  fontSize: 12,
+                }}
+              >
+                {transactions.length}
+              </Text>
+            </View>
+          </View>
+
+          <View
+            style={{
+              gap: 8,
+              flexDirection: 'row',
+            }}
+          >
+            <Text
+              numberOfLines={1}
+              style={[
+                type === FinancialOperationType.EXPENSE
+                  ? {
+                      color: COLORS.main.orange,
+                    }
+                  : {
+                      color: COLORS.main.blue,
+                    },
+              ]}
+            >
+              {formatUSDDecimal(Math.abs(totalAmount))}
+            </Text>
+
+            <ChevronDownIcon
+              style={{
+                transform: [{ rotate: `${!isOpen ? 0 : 180}deg` }],
+              }}
+              color="#000"
+            />
+          </View>
+        </View>
+      </Pressable>
+
+      {isOpen && (
+        <View
+          style={{
+            gap: 16,
+            paddingLeft: 20,
+            paddingBottom: 12,
+          }}
+        >
+          {transactions.map(
+            ({
+              amount,
+              category: { name: categoryName, id: categoryId },
+              description,
+              id,
+              date,
+              type,
+              recurrent_id: recurrentTransactionId,
+              spending_groups: spendingGroups,
+            }) => (
+              <Swipeable
+                key={id}
+                containerStyle={{
+                  position: 'relative',
+                  overflow: 'visible',
+                }}
+                // renderRightActions={() => (
+                //   <View
+                //     style={{
+                //       display: 'flex',
+                //       flexDirection: 'row',
+                //     }}
+                //   >
+                //     <Pressable
+                //       style={{
+                //         justifyContent: 'center',
+                //         alignItems: 'center',
+                //         paddingHorizontal: 16,
+                //         paddingVertical: 8,
+                //         backgroundColor: COLORS.main.blue,
+                //         width: 80,
+                //         borderTopLeftRadius: 8,
+                //         borderBottomLeftRadius: 8,
+                //       }}
+                //       onPress={() => {
+                //         router.push({
+                //           pathname: '/edit-transaction',
+                //           params: {
+                //             type,
+                //             id,
+                //             categoryId,
+                //             description,
+                //             amount,
+                //             date,
+                //           },
+                //         });
+                //       }}
+                //     >
+                //       <PencilIcon color="#fff" />
+
+                //       <Text
+                //         style={{
+                //           color: '#fff',
+                //         }}
+                //       >
+                //         Edit
+                //       </Text>
+                //     </Pressable>
+
+                //     <Pressable
+                //       style={{
+                //         justifyContent: 'center',
+                //         alignItems: 'center',
+                //         paddingHorizontal: 16,
+                //         paddingVertical: 8,
+                //         backgroundColor: COLORS.main.orange,
+                //         width: 80,
+                //         borderTopRightRadius: 8,
+                //         borderBottomRightRadius: 8,
+                //       }}
+                //       onPress={handleDeleteTransaction(id)}
+                //     >
+                //       <TrashIcon color="#fff" />
+
+                //       <Text
+                //         style={{
+                //           color: '#fff',
+                //         }}
+                //       >
+                //         Delete
+                //       </Text>
+                //     </Pressable>
+                //   </View>
+                // )}
+                overshootLeft={false}
+              >
+                <View
+                  style={{
+                    position: 'absolute',
+                    left: 0,
+                    top: 0,
+                    zIndex: 40,
+                    display: 'flex',
+                    transform: [{ translateY: -4 }, { translateX: 4 }],
+                    gap: 4,
+                  }}
+                >
+                  {spendingGroups?.map((group) => (
+                    <View
+                      key={group.id}
+                      style={{
+                        backgroundColor: COLORS.main.blue,
+                        paddingHorizontal: 4,
+                        borderRadius: 6,
+                      }}
+                    >
+                      <Text
+                        style={{
+                          color: '#fff',
+                        }}
+                      >
+                        {group.name}
+                      </Text>
+                    </View>
+                  ))}
+                </View>
+
+                <View
+                  style={{
+                    backgroundColor: '#fff',
+                    padding: 8,
+                    borderRadius: 8,
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    gap: 64,
+                    paddingTop: !isEmpty(spendingGroups) ? 16 : 0,
+                  }}
+                >
+                  <View style={{ flex: 1 }}>
+                    <Text
+                      style={{
+                        fontSize: 16,
+                      }}
+                      numberOfLines={1}
+                    >
+                      {categoryName}
+                    </Text>
+
+                    <Text numberOfLines={1}>{description}</Text>
+                  </View>
+
+                  <View>
+                    <View
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'flex-end',
+                        flexDirection: 'row',
+                        gap: 4,
+                      }}
+                    >
+                      <View>
+                        {recurrentTransactionId && (
+                          <RecurrentTransactionIcon color={COLORS.main.blue} />
+                        )}
+                      </View>
+
+                      <Text style={{ textAlign: 'right' }}>
+                        {format(parseISO(date), 'EEE, dd MMM')}
+                      </Text>
+                    </View>
+
+                    <Text
+                      style={{
+                        color:
+                          type === FinancialOperationType.EXPENSE
+                            ? COLORS.main.orange
+                            : COLORS.main.blue,
+                        textAlign: 'right',
+                      }}
+                    >
+                      {formatUSDDecimal(parseFloat(amount))}
+                    </Text>
+                  </View>
+                </View>
+              </Swipeable>
+            ),
+          )}
+        </View>
+      )}
+    </View>
+  );
+};
