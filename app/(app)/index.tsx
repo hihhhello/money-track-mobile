@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { format, formatISO, parseISO } from 'date-fns';
 import { Stack, useRouter } from 'expo-router';
-import { formatUSDDecimal, useBoolean } from 'hihhhello-utils';
+import { formatUSDDecimal } from 'hihhhello-utils';
 import { isEmpty } from 'lodash';
 import { useCallback, useMemo, useState } from 'react';
 import { FlatList, Pressable, RefreshControl, View } from 'react-native';
@@ -35,6 +35,7 @@ import {
   DateRange,
 } from '@/shared/utils/dateUtils';
 import { alpha, getNetAmount } from '@/shared/utils/helpers';
+import { useBoolean } from '@/shared/utils/useBoolean';
 
 export default function HomeScreen() {
   const router = useRouter();

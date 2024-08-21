@@ -1,4 +1,3 @@
-import { useBoolean } from 'hihhhello-utils';
 import { isEqual, upperFirst } from 'lodash';
 import { useEffect } from 'react';
 import { Pressable, View } from 'react-native';
@@ -15,6 +14,7 @@ import { CheckIcon } from '../icons/CheckIcon';
 import { ChevronDownIcon } from '../icons/ChevronDownIcon';
 import { COLORS } from '../theme';
 import { alpha } from '../utils/helpers';
+import { useBoolean } from '../utils/useBoolean';
 
 import {
   TransactionPeriodFilter,
@@ -34,6 +34,9 @@ export const TransactionsPeriodFilterSelect = ({
   handleChangeValue,
 }: TransactionsPeriodFilterSelectProps) => {
   const { value: isMenuOpen, toggle: handleToggleMenu } = useBoolean(false);
+
+  // const isMenuOpen = false;
+  // const handleToggleMenu = () => {};
 
   const rotation = useSharedValue(0);
 
