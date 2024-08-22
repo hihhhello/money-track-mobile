@@ -11,9 +11,12 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.hihhhello.moneytrackmobile"
     },
     "android": {
       "adaptiveIcon": {
@@ -44,6 +47,14 @@
         }
       ]
     ],
-    "scheme": "money-track"
+    "scheme": "money-track",
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "d6d1b58e-99d9-448a-8449-43424682eda0"
+      }
+    }
   }
 }

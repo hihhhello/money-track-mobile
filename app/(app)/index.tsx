@@ -4,9 +4,16 @@ import { Stack, useRouter } from 'expo-router';
 import { formatUSDDecimal } from 'hihhhello-utils';
 import { isEmpty } from 'lodash';
 import { useCallback, useMemo, useState } from 'react';
-import { FlatList, Pressable, RefreshControl, View } from 'react-native';
+import {
+  Button,
+  FlatList,
+  Pressable,
+  RefreshControl,
+  View,
+} from 'react-native';
 import { Swipeable } from 'react-native-gesture-handler';
 
+import { useAuth } from '@/providers/AuthProvider';
 import { api } from '@/shared/api/api';
 import { ChevronDownIcon } from '@/shared/icons/ChevronDownIcon';
 import { MinusIcon } from '@/shared/icons/MinusIcon';
@@ -39,6 +46,7 @@ import { useBoolean } from '@/shared/utils/useBoolean';
 
 export default function HomeScreen() {
   const router = useRouter();
+  const { signOut } = useAuth();
 
   const [transactionsPeriodFilter, setTransactionsPeriodFilter] =
     useState<TransactionPeriodFilterType>(TransactionPeriodFilter.MONTH);
@@ -191,6 +199,8 @@ export default function HomeScreen() {
             value={transactionsDateFilter}
           />
         )}
+
+        <Button title="Sign Out" onPress={signOut} />
       </View>
 
       <View
