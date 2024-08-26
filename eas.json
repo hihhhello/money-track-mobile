@@ -10,7 +10,16 @@
     "preview": {
       "distribution": "internal"
     },
-    "production": {}
+    "production": {
+      "env": {
+        "EXPO_PUBLIC_SERVER_URL": "https://botpro.org/moneyapp-api"
+      }
+    },
+    "test": {
+      "env": {
+        "EXPO_PUBLIC_SERVER_URL": "https://botpro.org/moneyapp-api"
+      }
+    }
   },
   "submit": {
     "production": {

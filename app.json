@@ -11,12 +11,11 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.hihhhello.moneytrackmobile"
+      "bundleIdentifier": "com.hihhhello.moneytrackmobile",
+      "buildNumber": "2"
     },
     "android": {
       "adaptiveIcon": {
